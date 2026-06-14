@@ -27,11 +27,11 @@ class AppointmentCard extends StatelessWidget {
       case 'waiting':
         return primaryColor;
       case 'ongoing':
-        return successColor;
+        return textColor;
       case 'canceled':
         return Colors.red;
       case 'completed':
-        return textColor;
+        return successColor;
       default:
         return Colors.white;
     }
@@ -50,89 +50,73 @@ class AppointmentCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => _navigateToDetail(context),
       child: Container(
-        padding: const EdgeInsets.only(right: 20, left: 0),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: Row(
-          children: [
-            RotatedBox(
-              quarterTurns: 1,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                decoration: BoxDecoration(
-                  color: _getStatusColor(),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  status.capitalizeFirst!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            isVertical
-                ? Expanded(
-                    child: Row(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: isVertical
+            ? Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Text(
+                          name,
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(99),
+                            color: _getStatusColor().withOpacity(0.1),
+                          ),
+                          child: Text(
+                            status.capitalize!,
+                            style: TextStyle(fontWeight: FontWeight.bold, color: _getStatusColor(), fontSize: 10),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
+                            Icon(Icons.access_time, size: 15),
+                            SizedBox(width: 5),
                             Text(
-                              "Name: $name",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor),
-                            ),
-                            Text(
-                              "Time: $time",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor),
+                              time,
+                              style: const TextStyle(color: textColor, fontSize: 12),
                             ),
                           ],
                         ),
-                        if (status.toLowerCase() == 'canceled' ||
-                            status.toLowerCase() == 'completed')
-                          SvgPicture.asset(
-                            status.toLowerCase() == 'canceled'
-                                ? 'assets/icons/cancel.svg'
-                                : 'assets/icons/complate.svg',
-                            width: 30,
-                            height: 30,
+                        if (status.toLowerCase() == 'canceled' || status.toLowerCase() == 'completed')
+                          Icon(
+                            status.toLowerCase() == 'canceled' ? Icons.cancel : Icons.check_circle,
+                            color: _getStatusColor(),
+                            size: 20,
                           ),
                       ],
                     ),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Name: $name",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: textColor),
-                      ),
-                      Text(
-                        "Time: $time",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: textColor),
-                      ),
-                    ],
-                  )
-          ],
-        ),
+                  ],
+                ),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Name: $name",
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                  ),
+                  Text(
+                    "Time: $time",
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                  ),
+                ],
+              ),
       ),
     );
   }

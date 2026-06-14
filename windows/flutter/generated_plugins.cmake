@@ -6,9 +6,11 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   desktop_drop
   file_selector_windows
+  gal
   media_kit_video
-  screen_brightness_windows
+  record_windows
   share_plus
+  speech_to_text_windows
   thumblr_windows
   url_launcher_windows
 )

@@ -9,6 +9,11 @@ import 'package:consulin_mobile_dev/app/constants/color.dart';
 import 'package:consulin_mobile_dev/app/routes/app_pages.dart';
 import 'package:consulin_mobile_dev/app/utils/helpers/string_helper.dart';
 
+import '../widgets/analysis_result.dart';
+import '../widgets/personalized_insights.dart';
+import '../widgets/upcoming_appointments.dart';
+import '../widgets/upcoming_history.dart';
+
 class HomePasienView extends GetView<HomePasienController> {
   const HomePasienView({super.key});
 
@@ -22,6 +27,7 @@ class HomePasienView extends GetView<HomePasienController> {
               : CustomRefreshIndicator(
                   onRefresh: () async {
                     await controller.fetchAppointments();
+                    await controller.fetchPersonalizedInsight();
                   },
                   child: SingleChildScrollView(
                     child: Padding(
@@ -37,21 +43,12 @@ class HomePasienView extends GetView<HomePasienController> {
                                 children: [
                                   Text(
                                     "Hi, ${controller.profilePasienController.profile.value.firstname} ${controller.profilePasienController.profile.value.lastname}",
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600),
+                                    style: const TextStyle(fontWeight: FontWeight.w600),
                                   ),
                                   const Row(
                                     children: [
-                                      Text(
-                                        "Welcome to ",
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      Text(
-                                        "Consulife",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
+                                      Text("Welcome to ", style: TextStyle(fontSize: 16)),
+                                      Text("Consulife", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                     ],
                                   ),
                                 ],
@@ -64,199 +61,22 @@ class HomePasienView extends GetView<HomePasienController> {
                               //         const Icon(Icons.notifications_outlined)),
                             ],
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Text(
-                            "Analysis Results",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: primaryColor,
-                                fontSize: 16),
-                          ),
-                          Card(
-                            color: carddetail,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: ColumnChartAnalysis(),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          'Probability of Stress: ${controller.aiAnalyzerPasienController.stressProbability.value}%'),
-                                      Text(
-                                          'Probability of Anxiety: ${controller.aiAnalyzerPasienController.anxietyProbability.value}%'),
-                                      Text(
-                                          'Probability of Depression: ${controller.aiAnalyzerPasienController.depressionProbability.value}%'),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  // ElevatedButton di bagian kanan bawah
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Get.toNamed(
-                                            Routes.ANALYZER_HISTORY_PASIEN);
-                                      },
-                                      child: const Text(
-                                        'Analyzer History',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: primaryColor,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          const SizedBox(height: 20),
+
+                          ///UPCOMING APPOINTMENTS
+                          UpcomingAppointments(),
                           const SizedBox(height: 25),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Upcoming Appointments",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryColor,
-                                    fontSize: 16),
-                              ),
-                              TextButton(
-                                  onPressed: () {
-                                    Get.toNamed(
-                                        Routes.UPCOMING_APPOINTMET_PASIEN);
-                                  },
-                                  child: const Text(
-                                    "See More",
-                                    style: TextStyle(
-                                        color: textColor,
-                                        fontWeight: FontWeight.w100),
-                                  )),
-                            ],
-                          ),
-                          controller.appointmentData.value.upcomingAppointments
-                                  .isEmpty
-                              ? const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'No upcoming appointments',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: textColor,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                    ],
-                                  ),
-                                )
-                              : SizedBox(
-                                  height: 100,
-                                  child: ListView.separated(
-                                    itemCount: controller.appointmentData.value
-                                        .upcomingAppointments.length,
-                                    scrollDirection: Axis.horizontal,
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      return AppointmentCard(
-                                        isPatient: true,
-                                        isVertical: false,
-                                        id: controller.appointmentData.value
-                                            .upcomingAppointments[index].id
-                                            .toString(),
-                                        status: controller.appointmentData.value
-                                            .upcomingAppointments[index].status,
-                                        name:
-                                            '${controller.appointmentData.value.upcomingAppointments[index].user.firstname.capitalize} ${controller.appointmentData.value.upcomingAppointments[index].user.lastname.capitalize}',
-                                        time:
-                                            "${formatDate(controller.appointmentData.value.upcomingAppointments[index].date)}, ${controller.appointmentData.value.upcomingAppointments[index].startTime}",
-                                      );
-                                    },
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(width: 10),
-                                  ),
-                                ),
+
+                          ///UPCOMING HISTORY
+                          UpcomingHistory(),
                           const SizedBox(height: 25),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Upcoming History",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryColor,
-                                    fontSize: 16),
-                              ),
-                              TextButton(
-                                  onPressed: () {
-                                    Get.toNamed(Routes.HISTORY_PASIEN);
-                                  },
-                                  child: const Text(
-                                    "See More",
-                                    style: TextStyle(
-                                        color: textColor,
-                                        fontWeight: FontWeight.w100),
-                                  )),
-                            ],
-                          ),
-                          controller.appointmentData.value.history.isEmpty
-                              ? const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'No upcoming history',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: textColor,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                    ],
-                                  ),
-                                )
-                              : ListView.separated(
-                                  itemCount: controller
-                                      .appointmentData.value.history.length,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    return AppointmentCard(
-                                      isPatient: true,
-                                      isVertical: true,
-                                      id: controller.appointmentData.value
-                                          .history[index].id
-                                          .toString(),
-                                      status: controller.appointmentData.value
-                                          .history[index].status,
-                                      name:
-                                          '${controller.appointmentData.value.history[index].user.firstname.capitalize} ${controller.appointmentData.value.history[index].user.lastname.capitalize}',
-                                      time:
-                                          "${formatDate(controller.appointmentData.value.history[index].date)}, ${controller.appointmentData.value.history[index].startTime}",
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(height: 10),
-                                ),
+
+                          ///ANALYSIS RESULTS
+                          AnalysisResult(),
+                          const SizedBox(height: 25),
+
+                          ///Personalized Insights
+                          PersonalizedInsights(),
                           const SizedBox(height: 25),
                         ],
                       ),

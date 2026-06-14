@@ -9,19 +9,15 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:consulin_mobile_dev/widgets/ui/custom_elevated_button.dart';
 
 const double defaultPadding = 16.0;
-const TextStyle specialtyTextStyle = TextStyle(
-  color: Colors.blue,
-  fontWeight: FontWeight.bold,
-  fontSize: 10,
-);
+const TextStyle specialtyTextStyle = TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 10);
 
-class DetailAvailablePasienView
-    extends GetView<DetailAvailablePasienController> {
+class DetailAvailablePasienView extends GetView<DetailAvailablePasienController> {
   const DetailAvailablePasienView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.chevron_left, color: textColor, size: 40),
@@ -52,11 +48,14 @@ class DetailAvailablePasienView
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const CircleAvatar(
-                              radius: 60,
-                              backgroundImage: NetworkImage(
-                                'https://via.placeholder.com/150',
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                color: const Color(0xFFF3F6FA),
+                                child: const Icon(Icons.person, size: 60, color: primaryColor),
                               ),
                             ),
                             const SizedBox(width: 16.0),
@@ -64,73 +63,58 @@ class DetailAvailablePasienView
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Nama lengkap yang akan otomatis ke bawah jika terlalu panjang
                                   Text(
-                                    '${controller.detailPsychologist.value.firstname.capitalizeFirst!}  ${controller.detailPsychologist.value.lastname.capitalizeFirst!}',
-                                    style: const TextStyle(
-                                        color: textColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                    softWrap:
-                                        true, // Membuat teks otomatis pindah ke baris berikutnya
+                                    '${controller.detailPsychologist.value.firstname.capitalizeFirst!} ${controller.detailPsychologist.value.lastname.capitalizeFirst!}',
+                                    style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 15),
+                                    softWrap: true,
                                   ),
                                   const SizedBox(height: 8.0),
                                   Row(
                                     children: [
-                                      const Icon(Icons.email_outlined,
-                                          size: 16.0),
+                                      const Icon(Icons.email_outlined, size: 16.0, color: textColor),
                                       const SizedBox(width: 4.0),
                                       Expanded(
                                         child: Text(
-                                          controller
-                                              .detailPsychologist.value.email
-                                              .toString(),
-                                          style:
-                                              const TextStyle(color: textColor),
-                                          softWrap:
-                                              true, // Membuat teks email pindah ke bawah jika perlu
+                                          controller.detailPsychologist.value.email.toString(),
+                                          style: const TextStyle(color: textColor, fontSize: 12),
+                                          softWrap: true,
                                         ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 8.0),
-                                  Row(
+                                  Wrap(
+                                    spacing: 16,
+                                    runSpacing: 8,
                                     children: [
-                                      const Icon(Icons.work_outline_rounded,
-                                          size: 16.0),
-                                      const SizedBox(width: 4.0),
-                                      Expanded(
-                                        child: Text(
-                                          controller.detailPsychologist.value
-                                              .psychologist!.workExperience
-                                              .toString(),
-                                          style:
-                                              const TextStyle(color: textColor),
-                                          softWrap:
-                                              true, // Membuat teks work experience pindah ke bawah jika perlu
-                                        ),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.work_outline_rounded, size: 16.0, color: textColor),
+                                          const SizedBox(width: 4.0),
+                                          Text(
+                                            controller.detailPsychologist.value.psychologist!.workExperience.toString(),
+                                            style: const TextStyle(color: textColor, fontSize: 12),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        controller.detailPsychologist.value
-                                                    .gender
-                                                    .toString() ==
-                                                'Male'
-                                            ? Icons.male
-                                            : Icons.female,
-                                        size: 16.0,
-                                      ),
-                                      const SizedBox(width: 4.0),
-                                      Text(
-                                        controller
-                                            .detailPsychologist.value.gender
-                                            .toString(),
-                                        style:
-                                            const TextStyle(color: textColor),
+
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            controller.detailPsychologist.value.gender.toString() == 'Male'
+                                                ? Icons.male
+                                                : Icons.female,
+                                            size: 16.0,
+                                            color: textColor,
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          Text(
+                                            controller.detailPsychologist.value.gender.toString(),
+                                            style: const TextStyle(color: textColor, fontSize: 12),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -145,25 +129,16 @@ class DetailAvailablePasienView
                           children: [
                             const Text(
                               'Specialties:',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
                             ),
                             const SizedBox(height: 8.0),
                             // Menampilkan spesialisasi secara dinamis menggunakan Wrap
                             Obx(() {
-                              List<String>? specializations = controller
-                                  .detailPsychologist
-                                  .value
-                                  .psychologist
-                                  ?.specialization;
+                              List<String>? specializations =
+                                  controller.detailPsychologist.value.psychologist?.specialization;
 
-                              if (specializations == null ||
-                                  specializations.isEmpty) {
-                                return const Center(
-                                    child:
-                                        Text('No specializations available'));
+                              if (specializations == null || specializations.isEmpty) {
+                                return const Center(child: Text('No specializations available'));
                               }
 
                               return Wrap(
@@ -172,16 +147,10 @@ class DetailAvailablePasienView
                                 alignment: WrapAlignment.start,
                                 children: specializations.map((specialization) {
                                   return Card(
-                                    color: carddetail,
+                                    color: primaryColor,
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        specialization,
-                                        style: const TextStyle(
-                                          color: textColor,
-                                          fontSize: 12,
-                                        ),
-                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      child: Text(specialization, style: const TextStyle(color: Colors.white, fontSize: 10)),
                                     ),
                                   );
                                 }).toList(),
@@ -193,119 +162,101 @@ class DetailAvailablePasienView
                         const SizedBox(height: 16.0),
                         const Text(
                           'Schedule',
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8.0),
-                        Obx(() => GestureDetector(
-                              onTap: () {
-                                controller.toggleCalendar();
-                              },
-                              child: Card(
-                                color: carddetail,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 12.0, horizontal: 16.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        controller.selectedDate.value == null
-                                            ? 'Pick a date'
-                                            : controller.formatDate(
-                                                controller.selectedDate.value!),
-                                        style: const TextStyle(
-                                            color: textColor, fontSize: 16),
+                        Obx(
+                          () => GestureDetector(
+                            onTap: () {
+                              controller.toggleCalendar();
+                            },
+                            child: Card(
+                              color: controller.selectedDate.value == null ? Color(0xFFF5F3F4) : primaryColor,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      controller.selectedDate.value == null
+                                          ? 'Pick a date'
+                                          : controller.formatDate(controller.selectedDate.value!),
+                                      style: TextStyle(
+                                        color: controller.selectedDate.value == null ? textColor : Colors.white,
+                                        fontSize: 16,
                                       ),
-                                      const Icon(Icons.calendar_today,
-                                          color: textColor),
-                                    ],
-                                  ),
+                                    ),
+                                    Icon(
+                                      Icons.calendar_month_outlined,
+                                      color: controller.selectedDate.value == null ? textColor : Colors.white,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            )),
-                        Obx(() => controller.isCalendarVisible.value
-                            ? SizedBox(
-                                height: 350,
-                                child: TableCalendar(
-                                  firstDay: DateTime.now(),
-                                  lastDay: DateTime.now().add(const Duration(
-                                      days:
-                                          7)), // Batasi hanya untuk seminggu ke depan
-                                  focusedDay: controller.focusedDay.value,
-                                  selectedDayPredicate: (day) => isSameDay(
-                                      controller.selectedDate.value, day),
-                                  enabledDayPredicate: (day) {
-                                    // Mendapatkan hari aktif dari controller
-                                    List<int> activeDays =
-                                        controller.mapDaysToIndices(
-                                      controller.detailPsychologist.value
-                                              .psychologist?.schedule?.days
-                                              .map((e) => e
-                                                  .day) // Ambil nama hari dari data
-                                              .toList() ??
-                                          [],
-                                    );
+                            ),
+                          ),
+                        ),
+                        Obx(
+                          () => controller.isCalendarVisible.value
+                              ? SizedBox(
+                                  height: 350,
+                                  child: TableCalendar(
+                                    firstDay: DateTime.now(),
+                                    lastDay: DateTime.now().add(
+                                      const Duration(days: 7),
+                                    ), // Batasi hanya untuk seminggu ke depan
+                                    focusedDay: controller.focusedDay.value,
+                                    selectedDayPredicate: (day) => isSameDay(controller.selectedDate.value, day),
+                                    enabledDayPredicate: (day) {
+                                      // Mendapatkan hari aktif dari controller
+                                      List<int> activeDays = controller.mapDaysToIndices(
+                                        controller.detailPsychologist.value.psychologist?.schedule?.days
+                                                .map((e) => e.day) // Ambil nama hari dari data
+                                                .toList() ??
+                                            [],
+                                      );
 
-                                    return activeDays.contains(day.weekday) &&
-                                        day.isAfter(DateTime.now().subtract(
-                                            const Duration(days: 1))) &&
-                                        day.isBefore(DateTime.now().add(
-                                            const Duration(
-                                                days:
-                                                    8))); // Pastikan hanya dalam 7 hari ke depan
-                                  },
-                                  onDaySelected: (selectedDay, focusedDay) {
-                                    controller.selectDate(selectedDay);
-                                  },
-                                  calendarStyle: const CalendarStyle(
-                                    selectedDecoration: BoxDecoration(
-                                      color: primaryColor,
-                                      shape: BoxShape.circle,
+                                      return activeDays.contains(day.weekday) &&
+                                          day.isAfter(DateTime.now().subtract(const Duration(days: 1))) &&
+                                          day.isBefore(
+                                            DateTime.now().add(const Duration(days: 8)),
+                                          ); // Pastikan hanya dalam 7 hari ke depan
+                                    },
+                                    onDaySelected: (selectedDay, focusedDay) {
+                                      controller.selectDate(selectedDay);
+                                    },
+                                    calendarStyle: const CalendarStyle(
+                                      selectedDecoration: BoxDecoration(color: primaryColor, shape: BoxShape.circle),
                                     ),
                                   ),
-                                ),
-                              )
-                            : const SizedBox()),
+                                )
+                              : const SizedBox(),
+                        ),
                         const SizedBox(height: 16.0),
                         const Text(
                           'Time',
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8.0),
                         ManageTime(
                           isSingleSelect: true,
                           onChange: controller.onSelectedTime,
                           value: controller.selectedTime2,
-                          times: controller.detailPsychologist.value
-                              .psychologist!.schedule?.days[0].times,
+                          times: controller.detailPsychologist.value.psychologist!.schedule?.days[0].times,
                           disabled: false,
                         ),
                         const SizedBox(height: 16.0),
                         CustomElevatedButton(
-                          primaryColor:
-                              (controller.selectedDate.value != null &&
-                                      controller.selectedTime2.isNotEmpty)
-                                  ? primaryColor
-                                  : carddetail,
-                          onPressed: (controller.selectedDate.value != null &&
-                                  controller.selectedTime2.isNotEmpty)
+                          primaryColor: (controller.selectedDate.value != null && controller.selectedTime2.isNotEmpty)
+                              ? primaryColor
+                              : Color(0xFFF5F3F4),
+                          onPressed: (controller.selectedDate.value != null && controller.selectedTime2.isNotEmpty)
                               ? () => controller.bookAppointment(context)
                               : () {
-                                  controller.showToast(
-                                      "Please select a date and time",
-                                      backgroundColor: warningColor);
+                                  controller.showToast("Please select a date and time", backgroundColor: warningColor);
                                 },
                           buttonText: "Book Appointment",
-                        )
+                        ),
                       ],
                     ),
                   ),
