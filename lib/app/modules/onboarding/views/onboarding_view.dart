@@ -33,13 +33,15 @@ class OnboardingView extends GetView<OnboardingController> {
                 ),
               ),
             ),
-            SliderWidget(
-              pageController: controller.pageController,
-              onboard: controller.data,
-              pageIndex: controller.pageIndex.value,
-              height: height,
-              width: width,
-              onChange: controller.onSlideChange,
+            Expanded(
+              child: SliderWidget(
+                pageController: controller.pageController,
+                onboard: controller.data,
+                pageIndex: controller.pageIndex.value,
+                height: height,
+                width: width,
+                onChange: controller.onSlideChange,
+              ),
             ),
             Obx(() {
               return Padding(
