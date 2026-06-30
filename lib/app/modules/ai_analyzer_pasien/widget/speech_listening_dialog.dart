@@ -23,7 +23,7 @@ class SpeechListeningDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Align(
-              alignment: AlignmentGeometry.topStart,
+              alignment: AlignmentDirectional.topStart,
               child: IconButton(
                 onPressed: () async {
                   await controller.stopVoiceInput();
