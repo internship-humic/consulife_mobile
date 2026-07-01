@@ -55,41 +55,39 @@ class ManageDay extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Obx(() => Wrap(
-              spacing: 10, // Horizontal space between items
-              runSpacing: 10, // Vertical space between lines
-              children: days.map((item) {
-                bool selected = isSelected(item['value']!);
-                return GestureDetector(
-                  onTap: () => handleSelectDay(item['value']!),
-                  child: Container(
-                    width: 60,
-                    height: 80,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
+        Obx(
+          () => Wrap(
+            spacing: 10, // Horizontal space between items
+            runSpacing: 10, // Vertical space between lines
+            children: days.map((item) {
+              bool selected = isSelected(item['value']!);
+              return GestureDetector(
+                onTap: () => handleSelectDay(item['value']!),
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: disabled
+                        ? (selected ? primaryColor.withOpacity(0.5) : primaryColor.withOpacity(0.2))
+                        : (selected ? primaryColor : const Color(0xffDDE7F9)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    item['label']!,
+                    style: TextStyle(
                       color: disabled
-                          ? (selected
-                              ? primaryColor.withOpacity(0.5)
-                              : primaryColor.withOpacity(0.2))
-                          : (selected ? primaryColor : const Color(0xffDDE7F9)),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      item['label']!,
-                      style: TextStyle(
-                        color: disabled
-                            ? (selected
-                                ? Colors.white.withOpacity(0.7)
-                                : Colors.black.withOpacity(0.2))
-                            : (selected ? Colors.white : Colors.black54),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          ? (selected ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.2))
+                          : (selected ? Colors.white : Colors.black54),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              }).toList(),
-            )),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }

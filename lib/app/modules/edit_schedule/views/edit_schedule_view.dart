@@ -27,27 +27,24 @@ class EditScheduleView extends GetView<EditScheduleController> {
             children: [
               const ButtonBack(),
               const SizedBox(height: 20),
-              _buildChooseDaySection(),
+              Text("Choose Day", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              const SizedBox(height: 5),
+              Text("(can multiple select)", style: TextStyle(fontSize: 10)),
               const SizedBox(height: 10),
               ManageDay(
                 value: controller.selectedDays,
                 onChange: controller.onSelectedDay,
               ),
-              const SizedBox(height: 20),
-              const Row(
-                children: [
-                  Text("Set Available Time Slot",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(width: 5),
-                  Text("(can multiple select)"),
-                ],
-              ),
+              const SizedBox(height: 25),
+              Text("Set Available Time Slot", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              const SizedBox(height: 5),
+              Text("(can multiple select)", style: TextStyle(fontSize: 10)),
               ManageTime(
                 onChange: controller.onSelectedTime,
                 value: controller.selectedTime,
               ),
               const SizedBox(
-                height: 20,
+                height: 50,
               ),
               CustomElevatedButton(
                 primaryColor: primaryColor,

@@ -115,6 +115,7 @@ class AiAnalyzerPasienController extends GetxController {
       onResult: _onSpeechResult,
       listenFor: const Duration(minutes: 5),
       pauseFor: const Duration(seconds: 6),
+      localeId: "id_ID",
       partialResults: true,
       cancelOnError: false,
       listenMode: stt.ListenMode.dictation,
