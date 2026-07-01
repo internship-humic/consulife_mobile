@@ -1,13 +1,8 @@
-import 'package:consulin_mobile_dev/widgets/ui/appointment_card.dart';
-import 'package:consulin_mobile_dev/widgets/ui/column_chart_analysis.dart';
 import 'package:consulin_mobile_dev/widgets/ui/loading_custom.dart';
 import 'package:consulin_mobile_dev/widgets/ui/refresh_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_pasien_controller.dart';
-import 'package:consulin_mobile_dev/app/constants/color.dart';
-import 'package:consulin_mobile_dev/app/routes/app_pages.dart';
-import 'package:consulin_mobile_dev/app/utils/helpers/string_helper.dart';
 
 import '../widgets/analysis_result.dart';
 import '../widgets/personalized_insights.dart';

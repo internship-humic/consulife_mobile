@@ -5,13 +5,15 @@ import '../../../../widgets/ui/appointment_card.dart';
 import '../../../constants/color.dart';
 import '../../../routes/app_pages.dart';
 import '../../../utils/helpers/string_helper.dart';
-import '../controllers/home_pasien_controller.dart';
+import '../controllers/home_psycholog_controller.dart';
 
-class UpcomingHistory extends GetView<HomePasienController> {
-  const UpcomingHistory({super.key});
+class AppointmentHistory extends GetView<HomePsychologController> {
+  const AppointmentHistory({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var appointmentHistoryLength = controller.appointmentHistory.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -19,12 +21,12 @@ class UpcomingHistory extends GetView<HomePasienController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              "Upcoming History",
+              "Appointment History",
               style: TextStyle(fontWeight: FontWeight.bold, color: primaryColor, fontSize: 16),
             ),
             TextButton(
               onPressed: () {
-                Get.toNamed(Routes.HISTORY_PASIEN);
+                Get.toNamed(Routes.PSIKOLOG_HISTORY);
               },
               child: const Text(
                 "See More",
@@ -33,34 +35,28 @@ class UpcomingHistory extends GetView<HomePasienController> {
             ),
           ],
         ),
-        controller.appointmentData.value.history.isEmpty
-            ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'No upcoming history',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
-                    ),
-                    SizedBox(height: 10),
-                  ],
+        const SizedBox(height: 10),
+        controller.appointmentHistory.isEmpty
+            ? const SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text('No appointment history', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               )
             : ListView.separated(
-                itemCount: 3,
-                // itemCount: controller.appointmentData.value.history.length,
+                itemCount: appointmentHistoryLength <= 3 ? appointmentHistoryLength : 3,
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return AppointmentCard(
-                    isPatient: true,
+                    isPatient: false,
                     isVertical: true,
-                    id: controller.appointmentData.value.history[index].id.toString(),
-                    status: controller.appointmentData.value.history[index].status,
+                    id: controller.appointmentHistory[index].id.toString(),
+                    status: controller.appointmentHistory[index].status,
                     name:
-                        '${controller.appointmentData.value.history[index].user.firstname.capitalize} ${controller.appointmentData.value.history[index].user.lastname.capitalize}',
+                        "${controller.appointmentHistory[index].user.firstname} ${controller.appointmentHistory[index].user.lastname}",
                     time:
-                        "${formatDate(controller.appointmentData.value.history[index].date)}, ${controller.appointmentData.value.history[index].startTime}",
+                        "${formatDate(controller.appointmentHistory[index].date)}, ${controller.appointmentHistory[index].startTime}",
                   );
                 },
                 separatorBuilder: (context, index) => const SizedBox(height: 10),
