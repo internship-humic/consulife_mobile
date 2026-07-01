@@ -20,12 +20,7 @@ class ManageScheduleView extends GetView<ManageScheduleController> {
       body: SafeArea(
         child: Obx(() {
           return controller.isLoading.value
-              ? Center(
-                  child: LoadingAnimationWidget.progressiveDots(
-                    color: Colors.black,
-                    size: 50,
-                  ),
-                )
+              ? Center(child: LoadingAnimationWidget.progressiveDots(color: Colors.black, size: 50))
               : CustomRefreshIndicator(
                   onRefresh: () async {
                     await controller.getSchedule();
@@ -41,14 +36,8 @@ class ManageScheduleView extends GetView<ManageScheduleController> {
                               : Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 20, top: 20),
-                                      child: Column(
-                                        children: [
-                                          _buildHeader(),
-                                          const SizedBox(height: 5),
-                                        ],
-                                      ),
+                                      padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                                      child: Column(children: [_buildHeader(), const SizedBox(height: 5)]),
                                     ),
                                     _buildScheduleCards(height),
                                   ],
@@ -57,43 +46,34 @@ class ManageScheduleView extends GetView<ManageScheduleController> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 20),
-                              _buildChooseDaySection(),
+                              Text("Choose Day", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              const SizedBox(height: 5),
+                              Text("(can multiple select)", style: TextStyle(fontSize: 10)),
                               const SizedBox(height: 10),
-                              ManageDay(
-                                value: controller.selectedDays,
-                                onChange: controller.onSelectedDay,
-                                disabled: true,
-                              ),
+                              ManageDay(value: controller.selectedDays, onChange: controller.onSelectedDay, disabled: true),
                               const SizedBox(height: 20),
-                              const Row(
-                                children: [
-                                  Text("Set Available Time Slot",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  SizedBox(width: 5),
-                                  Text("(can multiple select)"),
-                                ],
-                              ),
+                              Text("Set Available Time Slot", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              const SizedBox(height: 5),
+                              Text("(can multiple select)", style: TextStyle(fontSize: 10)),
                               ManageTime(
                                 onChange: controller.onSelectedTime,
                                 value: controller.selectedTime,
                                 disabled: true,
                               ),
-                              const SizedBox(
-                                height: 20,
-                              ),
+                              const SizedBox(height: 25),
                               CustomElevatedButton(
-                                  primaryColor: primaryColor,
-                                  onPressed: () {
-                                    Get.toNamed(Routes.EDIT_SCHEDULE);
-                                  },
-                                  buttonText: "Edit Schedule"),
+                                primaryColor: primaryColor,
+                                onPressed: () {
+                                  Get.toNamed(Routes.EDIT_SCHEDULE);
+                                },
+                                buttonText: "Edit Schedule",
+                              ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -107,22 +87,16 @@ class ManageScheduleView extends GetView<ManageScheduleController> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text("Schedule Overview",
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        Row(
-          children: [
-            const Text("Schedule Active"),
-            Obx(() {
-              return Switch(
-                focusColor: primaryColor,
-                activeColor: primaryColor,
-                inactiveThumbColor: primaryColor.withOpacity(0.5),
-                value: controller.isOpenAppointment.value,
-                onChanged: controller.onChanged,
-              );
-            }),
-          ],
-        ),
+        const Text("Schedule Overview", style: TextStyle(fontWeight: FontWeight.bold)),
+        Obx(() {
+          return Switch(
+            focusColor: primaryColor,
+            activeColor: primaryColor,
+            inactiveThumbColor: primaryColor.withOpacity(0.5),
+            value: controller.isOpenAppointment.value,
+            onChanged: controller.onChanged,
+          );
+        }),
       ],
     );
   }
@@ -132,7 +106,7 @@ class ManageScheduleView extends GetView<ManageScheduleController> {
     final controller = Get.find<ManageScheduleController>();
 
     return SizedBox(
-      height: height / 6,
+      height: height / 7,
       child: Obx(() {
         // Use the scheduleOpen observable to get the data
         final scheduleData = controller.scheduleOpen;
@@ -142,17 +116,13 @@ class ManageScheduleView extends GetView<ManageScheduleController> {
           final day = daySchedule['day'];
           final times = daySchedule['times'] as List<Map<String, String>>;
           return times.map((time) {
-            return {
-              'day': day,
-              'time': '${time['start']} - ${time['end']}',
-            };
+            return {'day': day, 'time': '${time['start']} - ${time['end']}'};
           });
         }).toList();
 
         return ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          itemCount: flattenedSchedule
-              .length, // Use the length of the flattened schedule
+          itemCount: flattenedSchedule.length, // Use the length of the flattened schedule
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             final scheduleItem = flattenedSchedule[index];
@@ -166,16 +136,6 @@ class ManageScheduleView extends GetView<ManageScheduleController> {
           },
         );
       }),
-    );
-  }
-
-  Row _buildChooseDaySection() {
-    return const Row(
-      children: [
-        Text("Choose Day", style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(width: 5),
-        Text("(can multiple select)"),
-      ],
     );
   }
 }
