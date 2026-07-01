@@ -10,6 +10,11 @@ import 'package:consulin_mobile_dev/app/constants/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
+import '../widgets/build_overview_tab.dart';
+import '../widgets/build_review_concern_tab.dart';
+import '../widgets/overview/build_ai_analys_result.dart';
+import '../widgets/overview/build_patient_card.dart';
+
 class DetailCompletedView extends GetView<DetailCompletedController> {
   const DetailCompletedView({super.key});
 
@@ -31,8 +36,7 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
         backgroundColor: Colors.white,
         actions: [
           Obx(() {
-            if (controller.appointmentDetail.value != null &&
-                controller.appointmentDetail.value!.status == 'ongoing') {
+            if (controller.appointmentDetail.value != null && controller.appointmentDetail.value!.status == 'ongoing') {
               return IconButton(
                 icon: const Icon(Icons.videocam, color: primaryColor),
                 onPressed: controller.joinMeet,
@@ -49,18 +53,13 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(
-            child: LoadingAnimationWidget.progressiveDots(
-              color: Colors.black,
-              size: 50,
-            ),
-          );
+          return Center(child: LoadingAnimationWidget.progressiveDots(color: Colors.black, size: 50));
         }
         return Column(
           children: [
             _buildProfileSection(),
             _buildTabNavigation(),
-            Expanded(child: _buildTabContent())
+            Expanded(child: _buildTabContent()),
           ],
         );
       }),
@@ -69,45 +68,46 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
 
   Widget _buildProfileSection() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 15.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircleAvatar(
-            radius: 50,
+            radius: 40,
             backgroundColor: Colors.grey[200],
-            child: const Icon(
-              Icons.person,
-              size: 50,
-              color: textColor,
-            ),
+            child: const Icon(Icons.person_2_outlined, size: 40, color: textColor),
           ),
           const SizedBox(height: 16.0),
           Text(
             '${controller.appointmentDetail.value!.user.firstname} ${controller.appointmentDetail.value!.user.lastname}',
-            style: const TextStyle(
-              fontSize: 22.0,
-              color: textColor,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 15, color: textColor, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8.0),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color:
-                  _getStatusColor(controller.appointmentDetail.value!.status),
-              borderRadius: BorderRadius.circular(12.0),
+              color: _getStatusColor(controller.appointmentDetail.value!.status).withOpacity(0.25),
+              borderRadius: BorderRadius.circular(100.0),
             ),
-            child: Text(
-              '${controller.appointmentDetail.value!.status.capitalizeFirst!} Appointment',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _getStatusIcon(controller.appointmentDetail.value!.status),
+                  color: _getStatusColor(controller.appointmentDetail.value!.status),
+                  size: 15,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  '${controller.appointmentDetail.value!.status.capitalizeFirst!} Appointment',
+                  style: TextStyle(
+                    color: _getStatusColor(controller.appointmentDetail.value!.status),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.0,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -117,131 +117,32 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
 
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
+      case 'waiting':
+        return primaryColor;
       case 'ongoing':
-        return Colors.green;
+        return textColor;
       case 'canceled':
         return Colors.red;
+      case 'completed':
+        return successColor;
       default:
-        return textColor;
+        return Colors.white;
     }
   }
 
-  Widget _buildPatientCard() {
-    return Card(
-      margin: const EdgeInsets.all(16.0),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      color: carddetail,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 5),
-            const Text(
-              "Patient Detail",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Name: ${controller.appointmentDetail.value!.user.firstname} ${controller.appointmentDetail.value!.user.lastname}",
-              style: const TextStyle(
-                fontSize: 16,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Gender: ${controller.appointmentDetail.value!.user.gender}",
-              style: const TextStyle(fontSize: 16, color: textColor),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Email: ${controller.appointmentDetail.value!.user.email}",
-              style: const TextStyle(
-                fontSize: 16,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Phone: ${controller.appointmentDetail.value!.user.phoneNumber}",
-              style: const TextStyle(
-                fontSize: 16,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Appointment: ${formatDate(controller.appointmentDetail.value!.date)}, ${controller.appointmentDetail.value!.startTime}",
-              style: const TextStyle(
-                fontSize: 16,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Obx(() {
-              if (controller.appointmentDetail.value!.status == 'ongoing') {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          controller.done(Get.context!);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: const Text('Done',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                  ],
-                );
-              } else if (controller.appointmentDetail.value!.status ==
-                      'waiting' ||
-                  controller.appointmentDetail.value!.status == 'ongoing') {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          controller.cancel(Get.context!);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: const Text('Cancel',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            }),
-          ],
-        ),
-      ),
-    );
+  IconData? _getStatusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case 'waiting':
+        return Icons.timer;
+      case 'ongoing':
+        return Icons.support_agent;
+      case 'canceled':
+        return Icons.cancel;
+      case 'completed':
+        return Icons.check_circle;
+      default:
+        return Icons.error;
+    }
   }
 
   Widget _buildTabNavigation() {
@@ -249,11 +150,7 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
       padding: const EdgeInsets.all(5.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildTabButton('Overview', 0),
-          _buildTabButton('Chat Room', 1),
-          _buildTabButton('Review Concern', 2),
-        ],
+        children: [_buildTabButton('Overview', 0), _buildTabButton('Chat Room', 1), _buildTabButton('Review Concern', 2)],
       ),
     );
   }
@@ -272,21 +169,15 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
                   label,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 16,
-                    color: controller.selectedTabIndex.value == index
-                        ? textColor
-                        : texttrans,
+                    fontSize: 12,
+                    color: controller.selectedTabIndex.value == index ? textColor : Colors.grey.shade400,
                   ),
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  width: controller.selectedTabIndex.value == index
-                      ? label.length * 6.0 / 2
-                      : 0.0,
+                  width: controller.selectedTabIndex.value == index ? label.length * 12 / 2 : 0.0,
                   height: 3.0,
-                  color: controller.selectedTabIndex.value == index
-                      ? textColor
-                      : Colors.transparent,
+                  color: controller.selectedTabIndex.value == index ? textColor : Colors.transparent,
                   margin: const EdgeInsets.only(top: 5.0),
                 ),
               ],
@@ -298,185 +189,15 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
   }
 
   Widget _buildTabContent() {
-    return Obx(
-      () {
-        if (controller.selectedTabIndex.value == 0) {
-          return _buildOverviewTab();
-        } else if (controller.selectedTabIndex.value == 1) {
-          return _buildChatRoomTab();
-        } else {
-          return _buildReviewConcernTab();
-        }
-      },
-    );
-  }
-
-  Widget _buildOverviewTab() {
-    return CustomRefreshIndicator(
-      onRefresh: () =>
-          controller.fetchAppointmentDetails(Get.arguments.toString()),
-      child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        children: [
-          _buildPatientCard(),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "AI Analysis Result",
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                  onPressed: () {
-                    controller.changeTab(2);
-                  },
-                  child: const Text(
-                    "See Review Concern",
-                    style: TextStyle(
-                        color: textColor, fontWeight: FontWeight.w100),
-                  )),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Last analyzed: ${formatDate(controller.appointmentDetail.value?.aiAnalyzer?.createdAt.toString() ?? '')}",
-            style: const TextStyle(
-              color: textColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: textColor,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/stress.svg',
-                  semanticsLabel: 'Stress Icon',
-                  height: 60,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Probability of Stress",
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "${controller.appointmentDetail.value?.aiAnalyzer?.stress}%",
-                    style: const TextStyle(
-                      color: textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: textColor,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/ansiety.svg',
-                  semanticsLabel: 'Anxiety Icon',
-                  height: 67,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Probability of Anxiety",
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "${controller.appointmentDetail.value?.aiAnalyzer?.anxiety}%",
-                    style: const TextStyle(
-                      color: textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: textColor,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: SvgPicture.asset(
-                  'assets/icons/depresi.svg',
-                  semanticsLabel: 'Depression Icon',
-                  height: 60,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Probability of Depression",
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "${controller.appointmentDetail.value?.aiAnalyzer?.depression}%",
-                    style: const TextStyle(
-                      color: textColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    return Obx(() {
+      if (controller.selectedTabIndex.value == 0) {
+        return BuildOverviewTab();
+      } else if (controller.selectedTabIndex.value == 1) {
+        return _buildChatRoomTab();
+      } else {
+        return BuildReviewConcernTab();
+      }
+    });
   }
 
   Widget _buildChatRoomTab() {
@@ -487,24 +208,13 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
 
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: GoogleFonts.poppins().fontFamily,
-          scaffoldBackgroundColor: const Color(0xffF5F5F7),
-        ),
+        theme: ThemeData(fontFamily: GoogleFonts.poppins().fontFamily, scaffoldBackgroundColor: const Color(0xffF5F5F7)),
         builder: (context, widget) {
-          return StreamChat(
-            client: controller.client,
-            child: widget,
-          );
+          return StreamChat(client: controller.client, child: widget);
         },
         home: Obx(() {
           return controller.isLoading.value
-              ? Center(
-                  child: LoadingAnimationWidget.progressiveDots(
-                    color: Colors.black,
-                    size: 50,
-                  ),
-                )
+              ? Center(child: LoadingAnimationWidget.progressiveDots(color: Colors.black, size: 50))
               : StreamChannel(
                   showLoading: true,
                   loadingBuilder: (context) => const LoadingCustom(),
@@ -515,79 +225,18 @@ class DetailCompletedView extends GetView<DetailCompletedController> {
       );
     });
   }
-
-  Widget _buildReviewConcernTab() {
-    return ListView.builder(
-      itemCount: controller.aiAnalysisHistory.value?.length,
-      padding: const EdgeInsets.all(16.0),
-      itemBuilder: (context, index) {
-        return Card(
-          elevation: 0,
-          margin: const EdgeInsets.only(bottom: 16.0),
-          color: carddetail,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  formatDate(
-                      controller.aiAnalysisHistory.value?[index].createdAt ??
-                          ''), // Hanya tahun-bulan-tanggal
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  controller.aiAnalysisHistory.value?[index].complaint ?? '',
-                  style: const TextStyle(fontSize: 16, color: textColor),
-                ),
-                const Divider(color: textColor),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            "Probability of Stress: ${controller.aiAnalysisHistory.value?[index].stress}%",
-                            style: const TextStyle(color: textColor)),
-                        Text(
-                            "Probability of Anxiety: ${controller.aiAnalysisHistory.value?[index].anxiety}%",
-                            style: const TextStyle(color: textColor)),
-                        Text(
-                            "Probability of Depression:  ${controller.aiAnalysisHistory.value?[index].depression}%",
-                            style: const TextStyle(color: textColor)),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
 
 class ChannelPage extends StatelessWidget {
   final DetailCompletedController controller = Get.find();
-  ChannelPage({
-    super.key,
-  });
+  ChannelPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          const Expanded(
-            child: StreamMessageListView(),
-          ),
+          const Expanded(child: StreamMessageListView()),
           Obx(() {
             if (controller.appointmentDetail.value!.status == 'ongoing') {
               return const StreamMessageInput();

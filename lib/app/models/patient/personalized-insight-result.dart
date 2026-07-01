@@ -33,8 +33,8 @@ class PersonalizedInsightResult {
     return PersonalizedInsightResult(
       title: 'Urgent Support Recommended',
       message:
-          'One recent entry suggests possible self-harm thoughts. Please seek immediate support from someone you trust.',
-      recommendation: 'Seek Immediate Help',
+          'Your recent analyzer history contains sensitive distress signals. Please contact someone you trust or a professional now.',
+      recommendation: 'Seek Immediate Support',
       severity: 'urgent',
     );
   }

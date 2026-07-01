@@ -10,14 +10,20 @@ import '../../../models/patient/personalized-insight-result.dart';
 class HomePasienController extends GetxController {
   // Observable for loading state
   final isLoading = false.obs;
-  final ProfilePasienController profilePasienController = Get.find<ProfilePasienController>();
-  final AiAnalyzerPasienController aiAnalyzerPasienController = Get.find<AiAnalyzerPasienController>();
+  final ProfilePasienController profilePasienController =
+      Get.find<ProfilePasienController>();
+  final AiAnalyzerPasienController aiAnalyzerPasienController =
+      Get.find<AiAnalyzerPasienController>();
+  late final Worker _insightRefreshWorker;
 
   final isInsightLoading = false.obs;
   final personalizedInsight = PersonalizedInsightResult.empty().obs;
 
   // Observable for appointment data
-  var appointmentData = AppointmentPatient(upcomingAppointments: [], history: []).obs;
+  var appointmentData = AppointmentPatient(
+    upcomingAppointments: [],
+    history: [],
+  ).obs;
 
   // Observable for statistics
   var probabilityOfStress = 65.0.obs;
@@ -25,8 +31,24 @@ class HomePasienController extends GetxController {
   var probabilityOfDepression = 70.0.obs;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
+    _insightRefreshWorker = ever<int>(
+      aiAnalyzerPasienController.insightRefreshVersion,
+      (_) async {
+        await fetchPersonalizedInsight();
+      },
+    );
+    _initializeHomeData();
+  }
+
+  @override
+  void onClose() {
+    _insightRefreshWorker.dispose();
+    super.onClose();
+  }
+
+  Future<void> _initializeHomeData() async {
     await fetchAppointments();
     await fetchPersonalizedInsight();
   }
@@ -39,8 +61,14 @@ class HomePasienController extends GetxController {
       appointmentData.value = await PatientService().getAppointmentPatient();
 
       // Limit the data to only the first 5 upcoming and history appointments
-      appointmentData.value.upcomingAppointments = appointmentData.value.upcomingAppointments.take(5).toList();
-      appointmentData.value.history = appointmentData.value.history.take(5).toList();
+      appointmentData.value.upcomingAppointments = appointmentData
+          .value
+          .upcomingAppointments
+          .take(5)
+          .toList();
+      appointmentData.value.history = appointmentData.value.history
+          .take(5)
+          .toList();
     } catch (e) {
       // Handle any errors that occur during the fetch
       print('Error fetching appointment data: $e');
@@ -53,7 +81,8 @@ class HomePasienController extends GetxController {
     try {
       isInsightLoading.value = true;
 
-      personalizedInsight.value = await PatientService().getPersonalizedInsight();
+      personalizedInsight.value = await PatientService()
+          .getPersonalizedInsight();
     } catch (e) {
       print('Error fetching personalized insight: $e');
       personalizedInsight.value = PersonalizedInsightResult.error();

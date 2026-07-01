@@ -12,13 +12,15 @@ class AiAnalyzerPasienController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final textController = TextEditingController();
   final isLoading = false.obs;
+  final insightRefreshVersion = 0.obs;
 
   final stressProbability = 0.0.obs;
   final anxietyProbability = 0.0.obs;
   final depressionProbability = 0.0.obs;
 
   final aiHistory = <AiAnalyzer>[].obs;
-  final PsychologController psychologController = Get.find<PsychologController>();
+  final PsychologController psychologController =
+      Get.find<PsychologController>();
 
   // Voice to text
   final stt.SpeechToText speechToText = stt.SpeechToText();
@@ -91,7 +93,8 @@ class AiAnalyzerPasienController extends GetxController {
 
     if (!isSpeechAvailable.value) {
       ToastHelper.show(
-        message: 'Speech recognition tidak tersedia atau permission microphone ditolak',
+        message:
+            'Speech recognition tidak tersedia atau permission microphone ditolak',
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 14.0,
@@ -136,7 +139,9 @@ class AiAnalyzerPasienController extends GetxController {
     recognizedWords.value = _committedTranscript;
     textController.text = _committedTranscript;
 
-    textController.selection = TextSelection.fromPosition(TextPosition(offset: textController.text.length));
+    textController.selection = TextSelection.fromPosition(
+      TextPosition(offset: textController.text.length),
+    );
 
     Future.delayed(const Duration(milliseconds: 300), () {
       _closeSpeechDialogIfOpen();
@@ -160,12 +165,17 @@ class AiAnalyzerPasienController extends GetxController {
 
     _lastPartialTranscript = currentPartial;
 
-    final combinedText = _combineTranscript(_committedTranscript, currentPartial);
+    final combinedText = _combineTranscript(
+      _committedTranscript,
+      currentPartial,
+    );
 
     recognizedWords.value = combinedText;
     textController.text = combinedText;
 
-    textController.selection = TextSelection.fromPosition(TextPosition(offset: textController.text.length));
+    textController.selection = TextSelection.fromPosition(
+      TextPosition(offset: textController.text.length),
+    );
 
     if (result.finalResult) {
       _commitTranscript(currentPartial);
@@ -174,7 +184,9 @@ class AiAnalyzerPasienController extends GetxController {
       recognizedWords.value = _committedTranscript;
       textController.text = _committedTranscript;
 
-      textController.selection = TextSelection.fromPosition(TextPosition(offset: textController.text.length));
+      textController.selection = TextSelection.fromPosition(
+        TextPosition(offset: textController.text.length),
+      );
     }
   }
 
@@ -229,6 +241,7 @@ class AiAnalyzerPasienController extends GetxController {
         await PatientService().aiAnalyzer(data);
 
         await fetchLatestAiAnalyzer();
+        insightRefreshVersion.value++;
 
         if (!psychologController.patientHasAIAnalysis.value) {
           await psychologController.fetchPsychologists();
@@ -241,7 +254,12 @@ class AiAnalyzerPasienController extends GetxController {
           fontSize: 16.0,
         );
       } catch (e) {
-        ToastHelper.show(message: e.toString(), backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+        ToastHelper.show(
+          message: e.toString(),
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       } finally {
         LoadingDialog.hide(Get.context!);
         isLoading.value = false;

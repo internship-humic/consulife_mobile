@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:consulin_mobile_dev/app/constants/color.dart';
 import 'package:consulin_mobile_dev/app/routes/app_pages.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class AppointmentCard extends StatelessWidget {
   final String status;
@@ -49,27 +48,31 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _navigateToDetail(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
-        child: isVertical
-            ? Expanded(
-                child: Column(
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          child: isVertical
+              ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          name,
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                        Expanded(
+                          child: Text(
+                            name,
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                          ),
                         ),
+                        const SizedBox(width: 12),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(99),
-                            color: _getStatusColor().withOpacity(0.1),
+                            color: _getStatusColor().withValues(alpha: 0.1),
                           ),
                           child: Text(
                             status.capitalize!,
@@ -78,45 +81,48 @@ class AppointmentCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.access_time, size: 15),
-                            SizedBox(width: 5),
-                            Text(
-                              time,
-                              style: const TextStyle(color: textColor, fontSize: 12),
-                            ),
-                          ],
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Icon(Icons.access_time, size: 15),
+                              const SizedBox(width: 5),
+                              Expanded(
+                                child: Text(time, style: const TextStyle(color: textColor, fontSize: 12)),
+                              ),
+                            ],
+                          ),
                         ),
-                        if (status.toLowerCase() == 'canceled' || status.toLowerCase() == 'completed')
+                        if (status.toLowerCase() == 'canceled' || status.toLowerCase() == 'completed') ...[
+                          const SizedBox(width: 12),
                           Icon(
                             status.toLowerCase() == 'canceled' ? Icons.cancel : Icons.check_circle,
                             color: _getStatusColor(),
                             size: 20,
                           ),
+                        ],
                       ],
                     ),
                   ],
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Name: $name",
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                    ),
+                    Text(
+                      "Time: $time",
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                    ),
+                  ],
                 ),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Name: $name",
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
-                  ),
-                  Text(
-                    "Time: $time",
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: textColor),
-                  ),
-                ],
-              ),
+        ),
       ),
     );
   }
